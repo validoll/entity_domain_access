@@ -60,6 +60,20 @@ Alternative solutions
 
 [Domain Access Entity](https://www.drupal.org/project/domain_entity) is simmilar project to provide domain access functions for any entities.
 
+Ignore entity types
+-------------------
+Some entity types can be ignored to use another solutions of domain access management.
+After installations the config contain following entity types to ignore:
+
+- `node` - should use `domain_access` module
+- `user` - should use `domain_access` module
+- `widget` - should use `widget_engine_domain_access` module
+
+TODO
+----
+- Add tests
+- Create config page for ignore list
+
 Thanks
 -------
 Config of this module based on code of [Domain Access Entity](https://www.drupal.org/project/domain_entity) module.
