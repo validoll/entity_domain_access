@@ -4,4 +4,4 @@ services:
     arguments: ['@config.factory', '@entity_type.manager', '@cache.data']
   entity_domain_access.manager:
     class: Drupal\entity_domain_access\EntityDomainAccessManager
-    arguments: ['@domain.loader', '@domain.negotiator', '@entity_domain_access.mapper']
+    arguments: ['@domain.negotiator', '@module_handler', '@entity_type.manager', '@entity_domain_access.mapper']

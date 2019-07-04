@@ -2,7 +2,9 @@
 
 namespace Drupal\entity_domain_access;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\domain_access\DomainAccessManager;
 use Drupal\domain\DomainLoaderInterface;
@@ -24,15 +26,17 @@ class EntityDomainAccessManager extends DomainAccessManager implements EntityDom
   /**
    * Constructs a DomainAccessManager object.
    *
-   * @param \Drupal\domain\DomainLoaderInterface $loader
-   *   The domain loader.
    * @param \Drupal\domain\DomainNegotiatorInterface $negotiator
    *   The domain negotiator.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   EntityTypeManager service.
    * @param \Drupal\entity_domain_access\EntityDomainAccessMapper $mapper_service
    *   The domain entity mapper.
    */
-  public function __construct(DomainLoaderInterface $loader, DomainNegotiatorInterface $negotiator, EntityDomainAccessMapper $mapper_service) {
-    parent::__construct($loader, $negotiator);
+  public function __construct(DomainNegotiatorInterface $negotiator, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, EntityDomainAccessMapper $mapper_service) {
+    parent::__construct($negotiator, $module_handler, $entity_type_manager);
     $this->mapper = $mapper_service;
   }
 
@@ -41,7 +45,7 @@ class EntityDomainAccessManager extends DomainAccessManager implements EntityDom
    */
   public static function getDefaultValue(FieldableEntityInterface $entity, FieldDefinitionInterface $definition) {
     $item = [];
-    if (!\Drupal::service('entity_domain_access.mapper')->isDomainAccessEntityType($entity->getEntityType()->id())) {
+    if (!$this->mapper->isDomainAccessEntityType($entity->getEntityType()->id())) {
       return $item;
     }
 
@@ -81,7 +85,6 @@ class EntityDomainAccessManager extends DomainAccessManager implements EntityDom
    */
   public function checkEntityHasDomains(EntityInterface $entity, array $domains) {
     $entity_domains = $this->getAccessValues($entity);
-
     $list = [];
     foreach ($domains as $domain_id) {
       if ($domain = $this->loader->load($domain_id)) {
