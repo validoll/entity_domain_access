@@ -17,35 +17,11 @@ use Drupal\Core\Entity\EntityInterface;
 class EntityDomainAccessManager extends DomainAccessManager implements EntityDomainAccessManagerInterface {
 
   /**
-   * The domain entity mapper.
-   *
-   * @var \Drupal\entity_domain_access\EntityDomainAccessMapper
-   */
-  protected $mapper;
-
-  /**
-   * Constructs a DomainAccessManager object.
-   *
-   * @param \Drupal\domain\DomainNegotiatorInterface $negotiator
-   *   The domain negotiator.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   Module handler service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   EntityTypeManager service.
-   * @param \Drupal\entity_domain_access\EntityDomainAccessMapper $mapper_service
-   *   The domain entity mapper.
-   */
-  public function __construct(DomainNegotiatorInterface $negotiator, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, EntityDomainAccessMapper $mapper_service) {
-    parent::__construct($negotiator, $module_handler, $entity_type_manager);
-    $this->mapper = $mapper_service;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function getDefaultValue(FieldableEntityInterface $entity, FieldDefinitionInterface $definition) {
     $item = [];
-    if (!$this->mapper->isDomainAccessEntityType($entity->getEntityType()->id())) {
+    if (!\Drupal::service('entity_domain_access.mapper')->isDomainAccessEntityType($entity->getEntityType()->id())) {
       return $item;
     }
 
